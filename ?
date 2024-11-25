@@ -1,0 +1,94 @@
+import random
+import time
+
+# Define basic molecular classes
+class Molecule:
+    def __init__(self, name, atoms, reactivity):
+        self.name = name
+        self.atoms = atoms  # Atoms in the molecule (represented by element symbols)
+        self.reactivity = reactivity  # How reactive this molecule is with others
+    
+    def __repr__(self):
+        return f"{self.name} ({self.reactivity})"
+
+class SiliconBasedCompound(Molecule):
+    def __init__(self, name, atoms, reactivity, complexity):
+        super().__init__(name, atoms, reactivity)
+        self.complexity = complexity  # Measure of complexity (more complexity = more advanced molecule)
+
+# Define a class to simulate the primordial soup
+class PrimordialSoup:
+    def __init__(self, temperature, solvent, energy_source):
+        self.temperature = temperature
+        self.solvent = solvent
+        self.energy_source = energy_source
+        self.molecules = []  # A list of molecules in the soup
+        self.time_step = 0
+
+    def add_molecule(self, molecule):
+        self.molecules.append(molecule)
+    
+    def simulate_reaction(self):
+        """Simulate simple reactions between molecules in the soup."""
+        # Randomly pick two molecules to react
+        mol1, mol2 = random.sample(self.molecules, 2)
+        
+        # Example: Silicon dioxide formation (Si + O2 -> SiO2)
+        if "Si" in mol1.atoms and "O" in mol2.atoms:
+            # Reaction: Silicon + Oxygen -> Silicon dioxide (SiO2)
+            new_molecule = SiliconBasedCompound("Silicon Dioxide", ["Si", "O", "O"], 0.8, 1)
+            self.molecules.append(new_molecule)
+            print(f"Reaction occurred: {mol1} + {mol2} -> {new_molecule}")
+        
+        # Example: Silane formation (Si + H2 -> SiH4)
+        elif "Si" in mol1.atoms and "H" in mol2.atoms:
+            # Check if the molecules involved are of type SiliconBasedCompound
+            if isinstance(mol1, SiliconBasedCompound) and isinstance(mol2, SiliconBasedCompound):
+                # Reaction: Silicon + Hydrogen -> Silane (SiH4)
+                new_molecule = SiliconBasedCompound("Silane", ["Si", "H", "H", "H", "H"], 0.9, mol1.complexity + mol2.complexity)
+                self.molecules.append(new_molecule)
+                print(f"Reaction occurred: {mol1} + {mol2} -> {new_molecule}")
+            else:
+                # Create a simpler reaction for non-complex molecules
+                new_molecule = SiliconBasedCompound("Silane", ["Si", "H", "H", "H", "H"], 0.7, 1)
+                self.molecules.append(new_molecule)
+                print(f"Reaction occurred (simple): {mol1} + {mol2} -> {new_molecule}")
+    
+    def evolve_molecules(self):
+        """Evolve molecules by randomly combining them over time."""
+        self.time_step += 1
+        print(f"\nTime step {self.time_step}:")
+        self.simulate_reaction()
+    
+    def display_molecules(self):
+        """Display the current state of the primordial soup."""
+        print(f"Current molecules in the soup ({len(self.molecules)} total):")
+        for molecule in self.molecules:
+            print(molecule)
+
+# Simulate the environment
+def run_simulation():
+    # Create the primordial soup environment
+    soup = PrimordialSoup(temperature=100, solvent="water", energy_source="geothermal")
+    
+    # Initialize basic molecules (simplified for silicon-based chemistry)
+    silicon = Molecule("Silicon", ["Si"], 0.9)
+    oxygen = Molecule("Oxygen", ["O", "O"], 1.0)
+    hydrogen = Molecule("Hydrogen", ["H", "H"], 1.0)
+    carbon = Molecule("Carbon", ["C"], 0.7)
+    
+    # Add basic molecules to the soup
+    soup.add_molecule(silicon)
+    soup.add_molecule(oxygen)
+    soup.add_molecule(hydrogen)
+    soup.add_molecule(carbon)
+    
+    # Simulate for a set number of steps
+    steps = 10
+    for _ in range(steps):
+        soup.evolve_molecules()
+        soup.display_molecules()
+        time.sleep(1)  # Pause to visualize the steps
+
+# Run the simulation
+run_simulation()
